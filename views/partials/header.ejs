@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.6.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f3f4f6;
+      }
+    </style>
+</head>
+<body>
+  <% if(footer){ %>
+    <div class="w-full h-auto flex items-center justify-between px-10 py-6">
+      <!-- College logo -->
+      <div class="h-20 w-20 overflow-hidden">
+        <img class="h-full object-cover" src="/images/satipg.png" alt="">
+      </div>
+      <div class="text-center">
+          <div class="text-lg font-semibold">SAMRAT ASHOK TECHNOLOGICAL INSTITUTE, VIDISHA (M.P.)</div>
+          <div class="text-sm text-gray-500">(An Autonomous Institute Affiliated to RGPV Bhopal)</div>
+          <div class="text-lg font-semibold">Minor Project</div>
+          <div class="text-lg font-semibold">Attendence Tracking Face Detection System</div>
+          <div class="text-lg font-semibold">B.tech VI-Sem Electronics and Communication Engineering</div>
+      </div>
+      <div class="h-20 w-20 overflow-hidden">
+        <img class="h-full object-cover" src="/images/StreakTrackLogo.png" alt="">
+      </div>
+    </div>
+    <div class="text-white flex justify-between items-center w-full bg-zinc-900 px-10 py-3 border-b-2 border-slate-500">
+      <a href="/dashboard"><i class="text-[1.4rem] ri-home-line"></i>Dashboard</a>
+        <a href="/attendance"><i class="text-[1.4rem] ri-dashboard-fill"></i></a>
+        <a href="/registerstudent"><i class="text-[1.4rem] ri-add-box-line"></i>Register Student</a>
+        <a href="/loginfaculty"><i class="text-[1.4rem] ri-login-box-line"></i>Faculty Login</a>
+    </div>
+    
+  <% } %>
+    

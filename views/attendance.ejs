@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="/javascripts/face-api.min.js"></script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    };
+    #video {
+      height: auto;
+      border: 2px solid #333;
+    }
+
+    canvas {
+      position: absolute;
+    }
+    .student{
+        display: none;
+    }
+  </style>
+</head>
+<body>
+  <video id="video" autoplay muted></video>
+
+  <% students.forEach((student, index) => { %>
+    <div class="student hidden">
+      <div class="hidden">
+        <img src="<%= student.image %>" alt="Student Image" class="">
+        <div>
+          <h3 class="hidden"><%= index + 1 %>. <%= student.name %></h3>
+          <p class="hidden">Enrollment No: <%= student.enrollmentNo %></p>
+        </div>
+      </div>
+    </div>
+  <% }); %>
+
+  <script defer src="/javascripts/faceDetection.js"></script>
+</body>
+</html>

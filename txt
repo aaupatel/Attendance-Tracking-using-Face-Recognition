@@ -1,0 +1,82 @@
+npx express-generator StreakTrack --view=ejs
+
+cd StreakTrack
+
+1. Set up MongoDB connection
+2. Create User Model
+3. Implement Authentication Middleware
+4. Create Routes {for user authentication, login, and logout}
+
+npm install mongoose passport passport-local passport-local-mongoose express-session express jquery
+
+
+StreakTrack/
+│
+├── bin/
+├── models/
+├── public/
+│   ├── images/
+│   │   └── studentsImages
+│   ├── javascripts/
+│   │   ├── faceDetection.js
+│   │   └── register-student.js
+│   └── stylesheets/
+├── routes/
+│   ├── index.js
+│   └── users.js
+├── views/
+│   ├── partials/
+│   │   ├── footer.ejs
+│   │   └── header.ejs
+│   ├── dashboard.ejs
+│   ├── attendance.ejs
+│   ├── error.ejs
+│   ├── facultydashboard.ejs
+│   ├── index.ejs
+│   ├── loginfaculty.ejs
+│   └── registerstudent.ejs
+├── app.js
+├── package-lock.json
+└── package.json
+
+StreakTrack/
+├── bin/
+│   └── www                      
+├── models/
+│   └── users.js  
+├── public/
+│   ├── images/                  
+│   │   └── studentsImages/      // Directory for student images
+│   ├── javascripts/
+│   │   ├── face-api.min.js           
+│   │   ├── faceDetection.js
+│   │   └── register-student.js  // JavaScript file for student registration
+│   ├── stylesheets/
+│   │   └── style.css
+│   └── models/ 
+│       ├── age_gender_model-weights_manifest.json
+│       ├── tiny_face_detector_model-weights_manifest.json
+│       ├── face_expression_model-weights_manifest.json
+│       ├── face_landmark_68_model-weights_manifest.json
+│       ├── face_landmark_68_tiny_model-weights_manifest.json
+│       ├── face_recognition_model-weights_manifest.json
+│       ├── mtcnn_model-weights_manifest.json
+│       └── ssd_mobilenetv1_model-weights_manifest.json
+├── routes/
+│   ├── index.js                  // Main routes
+│   └── multer.js                 // Routes related to multer
+├── views/
+│   ├── partials/
+│   │   ├── footer.ejs           // Footer partial view
+│   │   └── header.ejs           // Header partial view
+│   ├── dashboard.ejs            // Dashboard view
+│   ├── attendance.ejs           // Attendance view (to display video and detected faces)
+│   ├── error.ejs                // Error view
+│   ├── facultydashboard.ejs     // Faculty dashboard view
+│   ├── index.ejs                // Main index view
+│   ├── loginfaculty.ejs         // Faculty login view
+│   └── registerstudent.ejs      // Student registration view
+├── app.js                       // Main application file (e.g., Express.js setup)
+├── package-lock.json
+└── package.json
+
