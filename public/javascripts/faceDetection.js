@@ -1,5 +1,3 @@
-console.log("Script loaded");
-
 document.addEventListener('DOMContentLoaded', async () => {
   const studentElements = document.querySelectorAll('.student');
   const studentData = [];
@@ -7,71 +5,102 @@ document.addEventListener('DOMContentLoaded', async () => {
   for (const studentElement of studentElements) {
     const name = studentElement.querySelector('h3').textContent.trim();
     const enrollmentNo = studentElement.querySelector('p').textContent.split(':')[1].trim();
-    const imageSrc = studentElement.querySelector('img').getAttribute('src');
+    const imageElements = studentElement.querySelectorAll('img');
+    const images = [];
 
-    studentData.push({ name, enrollmentNo, imageSrc });
-    console.log(imageSrc);
-  };
-  // Start the video stream and initiate face detection
-  await startVideo();
+    imageElements.forEach((imageElement) => {
+      const imageSrc = imageElement.getAttribute('src');
+      images.push(imageSrc); 
+    });
+
+    studentData.push({ name, enrollmentNo, images });
+
+    // images.forEach((imageSrc, index) => {
+    //   console.log(`Student Name: ${name}, Enrollment No: ${enrollmentNo}, Image ${index + 1}: ${imageSrc}`);
+    // });
+  }
+
+  await startVideo(studentData);
 });
 
-// Load face-api.js models and start video stream
-async function startVideo() {
+async function startVideo(studentData) {
   const video = document.getElementById('video');
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
     video.srcObject = stream;
     await video.play();
 
-    // Load face detection, landmark, recognition, and expression models
-    await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
-    await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
-    await faceapi.nets.faceRecognitionNet.loadFromUri('/models');
-    await faceapi.nets.faceExpressionNet.loadFromUri('/models');
-
-    // Initiate face detection loop
-    detectFaces(video);
+    await faceapi.nets.tinyFaceDetector.loadFromUri('/weights');
+    await faceapi.nets.faceLandmark68Net.loadFromUri('/weights');
+    await faceapi.nets.faceRecognitionNet.loadFromUri('/weights');
+    await faceapi.nets.faceExpressionNet.loadFromUri('/weights');
+    await faceapi.nets.ssdMobilenetv1.loadFromUri('/weights');
+    detectFaces(video, studentData);
   } catch (error) {
     console.error('Error accessing webcam or loading models:', error);
   }
 }
 
-// Detect faces, landmarks, and descriptors on the video stream
-function detectFaces(video) {
+async function detectFaces(video, studentData) {
   const canvas = document.createElement('canvas');
-  canvas.willReadFrequently = true; // Set the attribute to optimize read operations
+  canvas.willReadFrequently = true; 
   document.body.appendChild(canvas);
 
-  // Match canvas dimensions to video stream dimensions
   const displaySize = { width: video.videoWidth, height: video.videoHeight };
   canvas.width = displaySize.width;
   canvas.height = displaySize.height;
-  
+
   const context = canvas.getContext('2d');
 
-  // Start face detection loop
   setInterval(async () => {
     try {
-      // Detect faces with landmarks and descriptors
       const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions({
         inputSize: 512,
         scoreThreshold: 0.5
       })).withFaceLandmarks()
-        .withFaceDescriptors();
+      .withFaceDescriptors();
 
-      // Clear canvas before drawing new detections
       context.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw bounding boxes and landmarks for detected faces
       const resizedDetections = faceapi.resizeResults(detections, displaySize);
       faceapi.draw.drawDetections(canvas, resizedDetections);
       faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
 
-      // Log the number of detected faces
+      const labeledDescriptors = studentData.map(async student => {
+        const descriptors = await Promise.all(student.images.map(async imageSrc => {
+          const image = await faceapi.fetchImage(imageSrc);
+          const detection = await faceapi.detectSingleFace(image).withFaceLandmarks().withFaceDescriptor();
+          return detection.descriptor;
+        }));
+        return new faceapi.LabeledFaceDescriptors(student.name, descriptors);
+      });
+      
+      const resolvedLabelDescriptors = await Promise.all(labeledDescriptors);
+      
       console.log(`Detected ${resizedDetections.length} face(s)`);
+      
+      resizedDetections.forEach(detection => {
+        const faceMatcher = new faceapi.FaceMatcher(resolvedLabelDescriptors, 0.5);
+        const bestMatch = faceMatcher.findBestMatch(detection.descriptor);
+        if (bestMatch.label !== 'unknown') {
+
+          function displayCurrentTime() {
+            let currentDate = new Date();
+            let date = currentDate.toDateString();
+            let time = currentDate.toLocaleTimeString();
+            let dateTimeString = `Current Date and Time: ${date}, ${time}`;
+            console.log(dateTimeString);
+        }
+        displayCurrentTime();
+        
+        console.log(`Match found: ${bestMatch.label}`);
+        } else {
+          console.log(`Unknown Person`);
+        }
+      });
+
     } catch (error) {
       console.error('Error detecting faces:', error);
     }
-  }, 500); // Adjust interval as needed
+  }, 1000); // Adjust interval as needed
 }

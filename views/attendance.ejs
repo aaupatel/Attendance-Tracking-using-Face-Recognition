@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+<% include ./partials/header.ejs %>
+
   <script src="/javascripts/face-api.min.js"></script>
   <style>
     body {
@@ -27,22 +22,30 @@
         display: none;
     }
   </style>
-</head>
-<body>
-  <video id="video" autoplay muted></video>
+  <div class="flex justify-center items-center">
+    <div class="bg-white mt-8 rounded-lg">
+      <video id="video" autoplay muted></video>
+      <div class="flex justify-center items-center mt-2">
+        <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-md" onclick="stopVideo()">Stop</button>
+        <a href="/facultydashboard">
+          <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md ml-4">Back</button>
+        </a>
+      </div>
+    </div>
+  </div>
 
   <% students.forEach((student, index) => { %>
-    <div class="student hidden">
-      <div class="hidden">
-        <img src="<%= student.image %>" alt="Student Image" class="">
-        <div>
-          <h3 class="hidden"><%= index + 1 %>. <%= student.name %></h3>
-          <p class="hidden">Enrollment No: <%= student.enrollmentNo %></p>
-        </div>
+    <div class="student">
+      <h3><%= index + 1 %>. <%= student.name %></h3>
+      <p>Enrollment No: <%= student.enrollmentNo %></p>
+      <div class="student-images">
+        <% student.images.forEach((image) => { %>
+          <img src="<%= image.imagePath %>" alt="Student Image">
+        <% }); %>
       </div>
     </div>
   <% }); %>
 
-  <script defer src="/javascripts/faceDetection.js"></script>
-</body>
-</html>
+  <script src="/javascripts/faceDetection.js"></script>
+
+<% include ./partials/footer.ejs %>

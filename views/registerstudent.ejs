@@ -1,33 +1,48 @@
 <% include ./partials/header.ejs %>
 
-<div class="container mx-auto max-w-md mt-20">
+<div class="container mx-auto max-w-md mt-2">
+  <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mb-4 rounded">
+    <p><strong><i class="ri-error-warning-line"></i>Image and Data Upload Guidelines:</strong></p>
+    <ul class="list-disc list-inside text-sm">
+      <li>You must upload exactly 3 images to proceed.</li>
+      <li>Upload in JPG or PNG format.</li>
+      <li>File size should be 10 KB - 10 MB.</li>
+      <li>Ensure clear, well-lit photos for optimal visibility, avoiding excessive filters or heavy edits for a natural appearance.</li>
+    </ul>
+  </div>
+  
   <h2 class="text-2xl mb-6">Register Student</h2>
-  <form id="studentForm" action="/registerstudent" method="POST">
-    <input type="text" name="name" placeholder="Student Name" class="block w-full px-4 py-2 mb-4 border rounded-md">
-    <input type="text" name="enrollmentNo" placeholder="Enrollment No." class="block w-full px-4 py-2 mb-4 border rounded-md">
-    <input type="hidden" name="studentImage" id="studentImage"> 
+  <form id="studentForm">
+    <input type="text" name="name" placeholder="Student Name" class="block w-full px-4 py-2 mb-4 border rounded-md" required>
+    <input type="text" name="enrollmentNo" placeholder="Enrollment No." class="block w-full px-4 py-2 mb-4 border rounded-md" required>
 
     <!-- Button to choose image -->
     <button type="button" id="chooseImageBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md">Choose Image</button>
 
     <!-- Image preview container -->
-    <div id="imagePreviewContainer" class="mt-4 mb-4" style="display: none;">
-      <img id="imagePreview" src="" alt="Image Preview" class="block mx-auto mb-2">
-      <button type="button" id="retakeImageButton" class="bg-red-500 text-white px-4 py-2 rounded-md">Retake Image</button>
+    <div id="imagePreviewContainer" style="display:none;" class="w-full h-96 relative mt-4 mb-4 flex item-center">
+      <button id="prevButton" class="prev-btn absolute left-0" style="margin-left: -40px; top:50%;" >
+        <i class="ri-skip-left-fill text-4xl"></i>
+      </button>
+      
+      <button id="nextButton" class="next-btn absolute right-0" style="margin-right: -40px;top:50%;" >
+        <i class="ri-skip-right-fill text-4xl"></i>
+      </button>
     </div>
 
-    <!-- Submit button -->
-    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Register Student</button>
+    <div class="flex justify-evenly items-center">
+      <button type="submit" id="registerBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md" style="display: none;">Register Student</button>
+      <button type="button" id="cancelBtn" class="bg-red-500 text-white px-4 py-2 rounded-md" style="display: none;">Cancel</button>
+    </div>
   </form>
 </div>
 
 <!-- Modal for image capture options -->
-<div id="imageCaptureModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center" style="display: none;">
+<div id="chooseImageModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center" style="display: none;">
   <div class="bg-white p-8 rounded-lg">
     <h3 class="text-xl mb-4">Choose Image Source</h3>
-    <button id="captureFromCameraBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md mb-4">Capture from Camera</button>
-    <input type="file" accept="image/*" id="uploadFromGalleryInput" style="display: none;">
-    <label for="uploadFromGalleryInput" class="bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer">Upload from Gallery</label>
+    <button id="uploadFromGalleryBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md mb-4">Upload from Gallery</button>
+    <button id="captureFromCameraBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md">Capture from Camera</button>
   </div>
 </div>
 
@@ -43,6 +58,6 @@
   </div>
 </div>
 
-<script src="javascripts/register-student.js"></script>
+<script src="/javascripts/register-student.js"></script>
 
 <% include ./partials/footer.ejs %>

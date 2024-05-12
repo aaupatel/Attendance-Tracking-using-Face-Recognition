@@ -5,8 +5,6 @@ const localStrategy = require('passport-local');
 const userModel = require('../models/users');
 const upload = require("./multer");
 const users = require('../models/users');
-// const path = require('path');
-// const faceapi = require('face-api.js');
 
 passport.use(new localStrategy(userModel.authenticate()));
 
@@ -27,7 +25,7 @@ router.get('/', function(req, res, next) {
 // Route to render the attendance page
 router.get('/attendance',isLoggedIn, async (req, res) => {
   try {
-    const user = await users.findOne({ username: req.user.username }).populate('students');
+    const user = await users.findOne({ _id: req.user._id }).populate('students');
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -42,17 +40,19 @@ router.get('/attendance',isLoggedIn, async (req, res) => {
 // Route: Render dashboard with user's registered students
 router.get('/dashboard', isLoggedIn, async (req, res) => {
   try {
-    const user = await users.findOne({ username: req.user.username }).populate('students');
+    const user = await users.findOne({ _id: req.user._id }).populate('students');
     if (!user) {
       return res.status(404).send('User not found');
     }
     const students = user.students;
+
     res.render('dashboard', { footer: true, students });
   } catch (error) {
     console.error('Error fetching dashboard data:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
 
 // Route: Render login page
 router.get('/loginfaculty', (req, res) => {
@@ -97,40 +97,41 @@ router.post('/loginfaculty', passport.authenticate('local', {
 }));
 
 // Route: student registration
-router.post('/registerstudent', upload.single('studentImage'), async (req, res) => {
-  const { name, enrollmentNo } = req.body;
-  const imagePath = `/images/studentsImages/${req.file.filename}`;
-
+router.post('/registerstudent', upload.array('studentImages', 3),async (req, res) => {
   try {
-      // Find the user by username (assuming the user is logged in)
-      const user = await users.findOne({ username: req.user.username });
-      if (!user) {
-          return res.status(404).send('User not found');
-      }
+    const { name, enrollmentNo } = req.body;
+    const uploadedImages = req.files;
 
-      // Create a new student object with details and image path
-      const newStudent = {
-          name,
-          enrollmentNo,
-          image: imagePath, // Store the image path
-          attendance: []
-      };
+    const user = await users.findOne({ username: req.user.username });
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
 
-      // Push the new student object into the user's students array
-      user.students.push(newStudent);
+    const studentImages = [];
 
-      // Save the updated user object to the database
-      await user.save();
+    uploadedImages.forEach(async (file) => {
+      const imageName = file.filename;
+        const imagePath = `/images/studentsImages/${file.filename}`;
 
-      console.log('Student registered successfully:', name, enrollmentNo, imagePath);
-      res.status(200).send('Student registered successfully');
+        studentImages.push({imageName, imagePath});
+    });
+
+    const newStudent = {
+      name,
+      enrollmentNo,
+      images: studentImages, // Store the image path
+      attendance: []
+    };
+    user.students.push(newStudent);
+    await user.save();
+    console.log(newStudent)
+    res.status(200).json({ message: 'Student registered successfully'});
   } catch (error) {
-      console.error('Error registering student:', error);
-      res.status(500).send('Error registering student');
+    console.error('Error registering student:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
-// Route: Handle user logout
 router.get('/logout', (req, res) => {
   req.logout(function(err) {
     if (err) {

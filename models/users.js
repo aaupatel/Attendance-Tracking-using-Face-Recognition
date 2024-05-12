@@ -1,22 +1,16 @@
 const mongoose = require('mongoose');
 const plm = require('passport-local-mongoose');
+const Schema = mongoose.Schema;
+const Student = require('./student');
 
-const studentSchema = new mongoose.Schema({
-  name: String,
-  enrollmentNo: String,
-  image: String, // Add a field to store the captured Image
-  attendance: [Boolean]
-});
-
-
-const userSchema = mongoose.Schema({
+const userSchema = new Schema({
   username: String,
   branch: String,
   email: String,
-  students: [studentSchema],
+  students: [Student.schema], 
   password: String
 });
 
 userSchema.plugin(plm);
 
-module.exports = mongoose.model('user',userSchema)
+module.exports = mongoose.model('user',userSchema);

@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./models/users');
@@ -28,6 +29,9 @@ mongoose.connect('mongodb://localhost:27017/streaktrack', {
 .then(() => console.log('MongoDB Connected'))
 .catch(err => console.log(err));
 
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(express.static('public'));
 
 app.use(passport.initialize())
 app.use(passport.session())
