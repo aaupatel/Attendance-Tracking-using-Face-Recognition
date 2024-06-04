@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const attendance = require('./attendance').schema;
 const Schema = mongoose.Schema;
 
 const studentSchema = new Schema({
@@ -7,8 +8,8 @@ const studentSchema = new Schema({
   images: [{
     imageName: String,
     imagePath: String
-  }], 
-  attendance: [Boolean] 
+  }],
+  attendanceRecords: [attendance],
 });
 
 module.exports = mongoose.model('Student', studentSchema);

@@ -5,14 +5,15 @@ const storage = multer.diskStorage({
         cb(null, './public/images/studentsImages');
     },
     filename: function (req, file, cb) {
-        cb(null, `student_${Date.now()}.jpg`); // Save with .jpg extension
+        const uniqueSuffix = `${Math.round(Math.random() * 1E9)}`;
+        cb(null, `student_${uniqueSuffix}-${Date.now()}.jpg`); // with .jpg extension
     }
 });
 
 const upload = multer({
     storage: storage,
     limits: {
-        fileSize: 5 * 1024 * 1024 // Example: 5 MB file size limit
+        fileSize: 10 * 1024 * 1024 // 10 MB file size limit
     }
 });
 
