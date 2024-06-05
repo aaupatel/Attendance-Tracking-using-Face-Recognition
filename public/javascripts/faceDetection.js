@@ -89,8 +89,8 @@ async function detectFaces(video, studentData) {
         const bestMatch = faceMatcher.findBestMatch(detection.descriptor);
         if (bestMatch.label !== 'unknown') {
           const studentId = bestMatch.label;
-          const currentDate = new Date().toDateString();
-          const currentTime = new Date().toLocaleTimeString();
+          const currentDate = new Date().toISOString().split('T')[0];
+          const currentTime = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' });
 
           const message = await markAttendance(studentId, currentDate,currentTime);
           showMessage(message);

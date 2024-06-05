@@ -5,7 +5,7 @@ const storage = multer.diskStorage({
         cb(null, './public/images/studentsImages');
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = `${Math.round(Math.random() * 1E9)}`;
+        const uniqueSuffix = `${Math.round(Math.random() * 1E12)}`;
         cb(null, `student_${uniqueSuffix}-${Date.now()}.jpg`); // with .jpg extension
     }
 });

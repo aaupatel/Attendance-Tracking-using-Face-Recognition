@@ -51,7 +51,7 @@ router.get('/dashboard', isLoggedIn, async (req, res) => {
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
 
-    res.render('dashboard', { footer: true, students, currentMonth, currentYear });
+    res.render('dashboard', { footer: true, students, currentMonth, currentYear,currentRoute: '/dashboard' });
   } catch (error) {
     console.error('Error fetching dashboard data:', error);
     res.status(500).send('Internal Server Error');
@@ -65,7 +65,7 @@ router.get('/loginfaculty', (req, res) => {
 
 // Route: Render student registration form
 router.get('/registerstudent', isLoggedIn, function(req, res) {
-  res.render('registerstudent', { footer: true });
+  res.render('registerstudent', { footer: true ,  currentRoute: '/registerstudent'});
 });
 
 // Route: Render faculty dashboard
@@ -77,7 +77,7 @@ router.get('/facultydashboard', isLoggedIn,async function(req, res) {
     }
     const students = user.students;
 
-    res.render('facultydashboard', { footer: true, students });
+    res.render('facultydashboard', { footer: true, students, currentRoute: '/facultydashboard' });
   } catch (error) {
     console.error('Error fetching dashboard data:', error);
     res.status(500).send('Internal Server Error');
@@ -107,7 +107,7 @@ router.post('/register', function(req, res) {
 
 // Route: faculty login
 router.post('/loginfaculty', passport.authenticate('local', {
-  successRedirect: '/facultydashboard',
+  successRedirect: '/dashboard',
   failureRedirect: '/loginfaculty'
 }));
 
@@ -171,13 +171,11 @@ router.post('/attendance', async (req, res) => {
     });
 
     if (attendanceRecord) {
-      // Attendance already marked for this date
       return res.json({
         attended: true,
         message: `${foundStudent.name}'s Attendance already marked at ${attendanceRecord.time}`
       });
     } else {
-      // Attendance not yet marked for this date, mark attendance
       const newAttendanceRecord = {
         date: new Date(currentDate),
         attended: true,

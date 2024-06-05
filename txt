@@ -15,19 +15,17 @@ StreakTrack/
 ├── bin/
 ├── models/
 │   ├── attendance.js
-│   ├── image.js
 │   ├── student.js
 │   └── users.js
 ├── public/
 │   ├── images/
 │   │   └── studentsImages/      // Directory for student images
 │   ├── javascripts/
-│   │   ├── dashboard.js
 │   │   ├── face-api.min.js
 │   │   ├── faceDetection.js
 │   │   └── register-student.js
 │   ├── stylesheets/
-│   │   └── register-student.js
+│   │   └── style.css
 │   └── weights/ 
 │       ├── age_gender_model-weights_manifest.json
 │       ├── tiny_face_detector_model-weights_manifest.json
