@@ -94,7 +94,7 @@ router.post('/register', function(req, res) {
 
   userModel.register(userData, req.body.password)
     .then(function(registeredUser) {
-      console.log('Registered User:', registeredUser);
+      //console.log('Registered User:', registeredUser);
       passport.authenticate('local')(req, res, function() {
         res.redirect('/facultydashboard');
       });
@@ -139,7 +139,7 @@ router.post('/registerstudent', upload.array('studentImages', 3),async (req, res
     };
     user.students.push(newStudent);
     await user.save();
-    console.log(newStudent)
+    //console.log(newStudent)
     res.status(200).json({ message: 'Student registered successfully'});
   } catch (error) {
     console.error('Error registering student:', error);
@@ -150,26 +150,26 @@ router.post('/registerstudent', upload.array('studentImages', 3),async (req, res
 // Route to check if attendance is already marked for a student on a specific date
 router.post('/attendance', async (req, res) => {
   const { studentId, currentDate, currentTime } = req.body;
-
+  
   try {
     const user = await users.findOne({ 'students._id': studentId });
-
+    
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
+    
     const foundStudent = user.students.find(student => student._id.toString() === studentId);
-
+    
     if (!foundStudent) {
       return res.status(404).json({ error: 'Student not found' });
     }
-    console.log(foundStudent.name);
-
+    //console.log(foundStudent.name);
+    
     // Check if attendance is already marked for the current date
     const attendanceRecord = foundStudent.attendanceRecords.find(record => {
       return record.date.toDateString() === new Date(currentDate).toDateString();
     });
-
+    
     if (attendanceRecord) {
       return res.json({
         attended: true,
@@ -181,11 +181,11 @@ router.post('/attendance', async (req, res) => {
         attended: true,
         time: currentTime
       };
-
+      
       foundStudent.attendanceRecords.push(newAttendanceRecord);
-
+      
       await user.save();
-
+      
       return res.json({
         marked: true,
         message: `${foundStudent.name}'s Attendance marked successfully at ${currentTime}`
@@ -197,11 +197,12 @@ router.post('/attendance', async (req, res) => {
   }
 });
 
+// Route to update attendance 
 router.post('/updateAttendance', async (req, res) => {
   const updates = req.body;
   try {
     for (const update of updates) {
-      const { studentId, date, attendanceStatus } = update;
+      const { studentId, date, attendanceStatus, time } = update;
       const attended = attendanceStatus === 'P';
       
       const user = await users.findOne({ 'students._id': studentId });
@@ -222,12 +223,16 @@ router.post('/updateAttendance', async (req, res) => {
       );
 
       if (attendanceRecord) {
-        attendanceRecord.attended = attended;
+        // Update only if the attendance status has changed
+        if (attendanceRecord.attended !== attended) {
+          attendanceRecord.attended = attended;
+          attendanceRecord.time = time;
+        }
       } else {
         student.attendanceRecords.push({
           date: new Date(date),
           attended: attended,
-          time: new Date().toTimeString().split(' ')[0]
+          time: time
         });
       }
 
@@ -241,6 +246,7 @@ router.post('/updateAttendance', async (req, res) => {
   }
 });
 
+// Route for Download Excel file
 router.get('/download-attendance', isLoggedIn, async (req, res) => {
   try {
     const user = await users.findOne({ _id: req.user._id }).populate('students');
@@ -298,6 +304,7 @@ router.get('/download-attendance', isLoggedIn, async (req, res) => {
   }
 });
 
+// Route for Logout
 router.get('/logout', (req, res) => {
   req.logout(function(err) {
     if (err) {

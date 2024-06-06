@@ -27,6 +27,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function startVideo(studentData) {
   const video = document.getElementById('video');
   try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      showError('getUserMedia is not supported in this browser. Please use a modern browser like Chrome, Firefox, or Safari.');
+      return;
+    }
     const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
     video.srcObject = stream;
     await video.play();
@@ -147,4 +151,13 @@ function showInstraction() {
   setTimeout(() => {
     InstractionDiv.style.display = 'none';
   }, 1000); // Adjust the duration as needed
+}
+
+function showError(message) {
+  const errorDiv = document.getElementById('error');
+  errorDiv.textContent = message;
+  errorDiv.style.display = 'block';
+  setTimeout(() => {
+    errorDiv.style.display = 'none';
+  }, 5000);
 }

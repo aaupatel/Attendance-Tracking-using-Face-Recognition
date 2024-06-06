@@ -123,10 +123,12 @@
         rows.forEach(row => {
             const selects = row.querySelectorAll('select');
             selects.forEach(select => {
+                const currentTimeIST = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' });
                 updates.push({
                     studentId: select.getAttribute('data-student-id'),
                     date: select.getAttribute('data-date'),
-                    attendanceStatus: select.value.trim().toUpperCase() 
+                    attendanceStatus: select.value.trim().toUpperCase(),
+                    time: currentTimeIST
                 });
             });
         });
