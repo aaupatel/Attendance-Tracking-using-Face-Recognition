@@ -114,7 +114,7 @@ router.post('/loginfaculty', passport.authenticate('local', {
 // Route: student registration
 router.post('/registerstudent', upload.array('studentImages', 3),async (req, res) => {
   try {
-    const { name, enrollmentNo } = req.body;
+    const { name, enrollmentNo, studentContactNo, parentName, parentContactNo } = req.body;
     const uploadedImages = req.files;
 
     const user = await users.findOne({ username: req.user.username });
@@ -134,6 +134,9 @@ router.post('/registerstudent', upload.array('studentImages', 3),async (req, res
     const newStudent = {
       name,
       enrollmentNo,
+      studentContactNo,
+      parentName,
+      parentContactNo,
       images: studentImages, // Store the image path
       attendance: []
     };
@@ -268,14 +271,17 @@ router.get('/download-attendance', isLoggedIn, async (req, res) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Attendance');
 
-    const headers = ['Sr.', 'Name', 'Enrollment No', ...openDays.map(day => new Date(day).toLocaleDateString('en-GB')), 'Total Classes', 'Classes Attended'];
+    const headers = ['Sr.', 'Name','Enrollment No','Contact No', 'Parent Name', 'Parent Contact No', ...openDays.map(day => new Date(day).toLocaleDateString('en-GB')), 'Total Classes', 'Classes Attended'];
     worksheet.addRow(headers);
 
     students.forEach((student, index) => {
       const row = [
         index + 1,
         student.name,
-        student.enrollmentNo,
+        student.enrollmentNo, 
+        student.studentContactNo,
+        student.parentName,
+        student.parentContactNo
       ];
 
       let classesAttended = 0;

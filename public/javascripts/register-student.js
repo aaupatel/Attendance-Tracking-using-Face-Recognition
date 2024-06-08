@@ -176,6 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const formData = new FormData();
     formData.append('name', document.querySelector('input[name="name"]').value);
     formData.append('enrollmentNo', document.querySelector('input[name="enrollmentNo"]').value);
+    formData.append('studentContactNo', document.querySelector('input[name="studentContactNo"]').value);
+    formData.append('parentName', document.querySelector('input[name="parentName"]').value);
+    formData.append('parentContactNo', document.querySelector('input[name="parentContactNo"]').value);
 
     selectedImages.forEach((dataURL, index) => {
         const blob = dataURLtoBlob(dataURL);
@@ -195,6 +198,9 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Student registered successfully!');
             document.querySelector('input[name="name"]').value = '';
             document.querySelector('input[name="enrollmentNo"]').value = '';
+            document.querySelector('input[name="studentContactNo"]').value = '';
+            document.querySelector('input[name="parentName"]').value = '';
+            document.querySelector('input[name="parentContactNo"]').value = '';
             modalElements.imagePreviewContainer.innerHTML = '';
             selectedImages.length = 0;
             imageCount = 0;

@@ -47,65 +47,77 @@
 
 <h2 class="text-2xl flex justify-center font-bold py-2">Dashboard</h2>
 
-<div class="table-container">
-    <table id="attendanceTable" class="table-auto">
-        <thead>
-            <tr>
-                <th>Sr.</th>
-                <th>Profile</th>
-                <th>Name</th>
-                <th>Enrollment No</th>
-                <!-- columns for each day of the month when classes were held -->
-                <% const openDaysSet = new Set();
-                students.forEach(student => {
-                    student.attendanceRecords.forEach(record => {
-                        if (record.attended) {
-                            openDaysSet.add(record.date.toISOString().substring(0, 10)); 
-                        }
-                    });
-                });
-                const openDays = Array.from(openDaysSet).sort((a, b) => new Date(a) - new Date(b)); 
-                %>
-                <% openDays.forEach(day => { %>
-                    <th><%= new Date(day).toLocaleDateString('en-GB') %></th> <!-- date in DD-MM-YYYY format -->
-                <% }); %>
-                <th>Total Classes</th>
-                <th>Classes Attended</th>
-            </tr>
-        </thead>
-        <tbody id="attendanceTableBody">
-            <% students.forEach((student, index) => { %>
+<% if (students.length === 0) { %>
+    <div class="flex justify-center items-center h-64">
+        <p class="text-xl text-gray-500">No students registered yet.</p>
+    </div>
+<% } else { %>
+    <div class="table-container">
+        <table id="attendanceTable" class="table-auto">
+            <thead>
                 <tr>
-                    <td><%= index + 1 %></td>
-                    <td><img src="<%= student.images[0].imagePath %>" alt="Student Image" class="rounded-full h-8 w-8"></td>
-                    <td><%= student.name %></td>
-                    <td><%= student.enrollmentNo %></td>
-                    <% let classesAttended = 0; %>
+                    <th>Sr.</th>
+                    <th>Profile</th>
+                    <th>Name</th>
+                    <th>Enrollment No</th>
+                    <th>Contact No</th>
+                    <th>Parent Name</th>
+                    <th>Parent Contact No</th>
+                    <!-- columns for each day of the month when classes were held -->
+                    <% const openDaysSet = new Set();
+                    students.forEach(student => {
+                        student.attendanceRecords.forEach(record => {
+                            if (record.attended) {
+                                openDaysSet.add(record.date.toISOString().substring(0, 10)); 
+                            }
+                        });
+                    });
+                    const openDays = Array.from(openDaysSet).sort((a, b) => new Date(a) - new Date(b)); 
+                    %>
                     <% openDays.forEach(day => { %>
-                        <% const attendanceRecord = student.attendanceRecords.find(record => record.date.toISOString().substring(0, 10) === day); %>
-                        <% const attendanceStatus = attendanceRecord ? (attendanceRecord.attended ? 'P' : 'A') : 'A'; %>
-                        <% const attendanceTime = attendanceRecord ? attendanceRecord.time : ''; %>
-                        <% if (attendanceStatus === 'P') { classesAttended++; } %>
-                        <td class="<%= attendanceStatus === 'P' ? 'present' : 'absent' %>">
-                            <%= attendanceStatus %>
-                            <% if (attendanceStatus === 'P') { %>
-                                <div class="tooltip"><%= attendanceTime %></div>
-                            <% } %>
-                        </td>
+                        <th><%= new Date(day).toLocaleDateString('en-GB') %></th> <!-- date in DD-MM-YYYY format -->
                     <% }); %>
-                    <td><%= openDays.length %></td>
-                    <td><%= classesAttended %></td>
+                    <th>Total Classes</th>
+                    <th>Classes Attended</th>
                 </tr>
-            <% }); %>
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody id="attendanceTableBody">
+                <% students.forEach((student, index) => { %>
+                    <tr>
+                        <td><%= index + 1 %></td>
+                        <td><img src="<%= student.images[0].imagePath %>" alt="Student Image" class="rounded-full h-8 w-8"></td>
+                        <td><%= student.name %></td>
+                        <td><%= student.enrollmentNo %></td>
+                        <td><%= student.studentContactNo %></td>
+                        <td><%= student.parentName %></td>
+                        <td><%= student.parentContactNo %></td>
+                        <% let classesAttended = 0; %>
+                        <% openDays.forEach(day => { %>
+                            <% const attendanceRecord = student.attendanceRecords.find(record => record.date.toISOString().substring(0, 10) === day); %>
+                            <% const attendanceStatus = attendanceRecord ? (attendanceRecord.attended ? 'P' : 'A') : 'A'; %>
+                            <% const attendanceTime = attendanceRecord ? attendanceRecord.time : ''; %>
+                            <% if (attendanceStatus === 'P') { classesAttended++; } %>
+                            <td class="<%= attendanceStatus === 'P' ? 'present' : 'absent' %>">
+                                <%= attendanceStatus %>
+                                <% if (attendanceStatus === 'P') { %>
+                                    <div class="tooltip"><%= attendanceTime %></div>
+                                <% } %>
+                            </td>
+                        <% }); %>
+                        <td><%= openDays.length %></td>
+                        <td><%= classesAttended %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
 
-<div class="flex justify-center mt-8">
-    <a href="/download-attendance" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded">
-        Download Attendance
-        <i class="ri-file-excel-2-line text-xl ml-2"></i>
-    </a>
-</div>
+    <div class="flex justify-center mt-8">
+        <a href="/download-attendance" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded">
+            Download Attendance
+            <i class="ri-file-excel-2-line text-xl ml-2"></i>
+        </a>
+    </div>
+<% } %>
 
 <% include ./partials/footer.ejs %>
