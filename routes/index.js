@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
@@ -8,6 +9,7 @@ const users = require('../models/users');
 const Student = require('../models/student');
 const Attendance = require('../models/attendance');
 const ExcelJS = require('exceljs');
+const sendWhatsAppMessage = require('../sendMessage');
 
 passport.use(new localStrategy(userModel.authenticate()));
 
@@ -96,7 +98,7 @@ router.post('/register', function(req, res) {
     .then(function(registeredUser) {
       //console.log('Registered User:', registeredUser);
       passport.authenticate('local')(req, res, function() {
-        res.redirect('/facultydashboard');
+        res.redirect('/dashboard');
       });
     })
     .catch(function(error) {
@@ -184,11 +186,10 @@ router.post('/attendance', async (req, res) => {
         attended: true,
         time: currentTime
       };
-      
       foundStudent.attendanceRecords.push(newAttendanceRecord);
-      
       await user.save();
-      
+      // for sending WhatsApp messages when attendance is marked to student
+      sendWhatsAppMessage(foundStudent.studentContactNo, `Dear ${foundStudent.name}, Your attendance has been marked successfully at ${currentTime}`);
       return res.json({
         marked: true,
         message: `${foundStudent.name}'s Attendance marked successfully at ${currentTime}`

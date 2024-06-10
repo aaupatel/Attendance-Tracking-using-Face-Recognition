@@ -5,11 +5,22 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const passport = require('passport');
+const cron = require('node-cron');
+const expressSession = require('express-session');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./models/users');
-const passport = require('passport');
-const expressSession = require('express-session');
+const checkAttendance = require('./routes/attendance').checkAttendance;
+
+// Schedule the checkAttendance function to run every day at 7:00 PM
+cron.schedule('0 19 * * *', () => {
+    checkAttendance();
+});
+// for every 1 minutes
+// cron.schedule('*/1 * * * *', () => {
+//   checkAttendance();
+// });
 
 const app = express();
 
@@ -19,10 +30,10 @@ app.set('view engine', 'ejs');
 app.use(expressSession({
   resave: false,
   saveUninitialized: false,
-  secret: "hello"
+  secret: process.env.SESSION_SECRET || 'defaultsecret'
 }));
 
-mongoose.connect('mongodb://localhost:27017/streaktrack', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/streaktrack', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
