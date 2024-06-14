@@ -42,7 +42,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/streaktra
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use('/public', express.static('public'));
 
 app.use(passport.initialize())
 app.use(passport.session())

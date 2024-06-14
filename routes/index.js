@@ -189,7 +189,7 @@ router.post('/attendance', async (req, res) => {
       foundStudent.attendanceRecords.push(newAttendanceRecord);
       await user.save();
       // for sending WhatsApp messages when attendance is marked to student
-      sendWhatsAppMessage(foundStudent.studentContactNo, `Dear ${foundStudent.name}, Your attendance has been marked successfully at ${currentTime}`);
+      sendWhatsAppMessage(foundStudent.studentContactNo, `Dear ${foundStudent.name}, Your attendance has been marked successfully at ${currentTime} .`);
       return res.json({
         marked: true,
         message: `${foundStudent.name}'s Attendance marked successfully at ${currentTime}`
