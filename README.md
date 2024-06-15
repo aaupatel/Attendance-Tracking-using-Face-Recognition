@@ -19,7 +19,7 @@ StreakTrack is a web application for managing student attendance using face dete
 - Passport.js for authentication
 - Face-api.js for face detection
 - EJS for views
-- EJS for views
+- PERISKOPE API for WhatsApp Message sending
 
 ## Setup
 

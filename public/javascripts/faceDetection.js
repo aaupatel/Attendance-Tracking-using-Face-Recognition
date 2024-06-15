@@ -97,10 +97,14 @@ async function detectFaces(video, studentData) {
           const currentTime = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' });
 
           const message = await markAttendance(studentId, currentDate,currentTime);
-          showMessage(message);
-        
+          if (message.includes('already marked')) {
+            showMessage(message, 2000);
+          } else {
+            showMessage(message, 5000);
+          }
+          // showMessage(message);
         } else {
-          showMessage("Unknown Person");
+          showMessage("Unknown Person",1000);
           //console.log(`Unknown Person`);
         }
       });
@@ -124,9 +128,11 @@ async function markAttendance(studentId, currentDate, currentTime) {
     if (!response.ok) {
       throw new Error(`Failed to mark attendance: ${response.statusText}`);
     }
-
+    
     const data = await response.json();
+    console.log(data.message);
     if (data.message === 'Attendance already marked') {
+      showMessage(`${studentId}'s Attendance marked successfully at ${data.time}`, 5000);
       return `${studentId} has already marked present at ${data.time}`;
     } else {
       return data.message;
@@ -136,13 +142,31 @@ async function markAttendance(studentId, currentDate, currentTime) {
   }
 }
 
-function showMessage(message) {
+let messageQueue = [];
+let messageTimeout;
+
+function showMessage(message, duration = 1000) {
+  messageQueue.push({ message, duration });
+  if (messageQueue.length === 1) {
+    displayNextMessage();
+  }
+}
+
+function displayNextMessage() {
+  if (messageQueue.length === 0) {
+    return;
+  }
+
+  const { message, duration } = messageQueue[0];
   const messageDiv = document.getElementById('message');
   messageDiv.textContent = message;
   messageDiv.style.display = 'block';
-  setTimeout(() => {
+
+  messageTimeout = setTimeout(() => {
     messageDiv.style.display = 'none';
-  }, 5000); // Adjust the duration as needed
+    messageQueue.shift();
+    displayNextMessage();
+  }, duration);
 }
 
 function showInstraction() {
@@ -150,7 +174,7 @@ function showInstraction() {
   InstractionDiv.style.display = 'block';
   setTimeout(() => {
     InstractionDiv.style.display = 'none';
-  }, 1000); // Adjust the duration as needed
+  }, 2000);
 }
 
 function showError(message) {

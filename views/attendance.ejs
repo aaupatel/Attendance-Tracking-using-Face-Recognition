@@ -63,37 +63,41 @@
     }
 
   </style>
-
-  <div class="error" id="error"></div>
-  <div class="Instraction" id="Instraction">Please Wait</div> 
+  <% if (students.length === 0) { %>
+    <div class="flex justify-center items-center h-64">
+        <p class="text-xl text-gray-500">No students registered yet, Register Student First</p>
+    </div>
+  <% } else { %>
+    <div class="error" id="error"></div>
+    <div class="Instraction" id="Instraction">Please Wait</div> 
   
-  <div class="flex justify-center items-center">
-    <div class="bg-white mt-8 rounded-lg">
-      <video id="video" autoplay muted></video>
-      <div class="flex justify-center items-center mt-2">
-        <!-- <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-md" onclick="stopVideo()">Stop</button> -->
-        <a href="/dashboard">
-          <button type="button" class="bg-blue-500 hover:bg-blue-900 text-white px-4 py-2 rounded-md">Back</button>
-        </a>
+    <div class="flex justify-center items-center">
+      <div class="bg-white mt-8 rounded-lg">
+        <video id="video" autoplay muted></video>
+        <div class="flex justify-center items-center mt-2">
+          <!-- <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-md" onclick="stopVideo()">Stop</button> -->
+          <a href="/dashboard">
+            <button type="button" class="bg-blue-500 hover:bg-blue-900 text-white px-4 py-2 rounded-md">Back</button>
+          </a>
+        </div>
       </div>
     </div>
-  </div>
   
-  <div class="message" id="message"></div> 
+    <div class="message" id="message"></div> 
 
-  <% students.forEach((student, index) => { %>
-    <div class="student">
-      <h3><%= index + 1 %>. <%= student.name %></h3>
-      <h2><%= student.id %></h2>
-      <p>Enrollment No: <%= student.enrollmentNo %></p>
-      <div class="student-images">
-        <% student.images.forEach((image) => { %>
-          <img src="<%= image.imagePath %>" alt="Student Image">
-        <% }); %>
+    <% students.forEach((student, index) => { %>
+      <div class="student">
+        <h3><%= index + 1 %>. <%= student.name %></h3>
+        <h2><%= student.id %></h2>
+        <p>Enrollment No: <%= student.enrollmentNo %></p>
+        <div class="student-images">
+          <% student.images.forEach((image) => { %>
+            <img src="<%= image.imagePath %>" alt="Student Image">
+          <% }); %>
+        </div>
       </div>
-    </div>
-  <% }); %>
-
-  <script src="/javascripts/faceDetection.js"></script>
+    <% }); %>
+    <script src="/javascripts/faceDetection.js"></script>
+  <% } %>
 
 <% include ./partials/footer.ejs %>
