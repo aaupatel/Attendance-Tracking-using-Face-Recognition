@@ -6,8 +6,8 @@ const userSchema = new mongoose.Schema({
   username: String,
   branch: String,
   email: String,
-  //students: [Student.schema],
-  students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
+  students: [Student.schema],
+  //students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
   password: String
 });
 
