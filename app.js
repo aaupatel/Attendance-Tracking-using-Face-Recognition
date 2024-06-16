@@ -1,3 +1,4 @@
+require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -23,6 +24,17 @@ cron.schedule('0 19 * * *', () => {
 // });
 
 const app = express();
+
+const uri = process.env.DATABASE_URL;
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('MongoDB connected', uri))
+.catch(err => console.error('MongoDB connection error:', err));
+mongoose.connection.on('error', (err) => {
+  console.error('MongoDB connection error:', err);
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
