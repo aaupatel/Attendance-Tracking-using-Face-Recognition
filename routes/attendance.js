@@ -37,10 +37,10 @@ async function checkAttendance() {
             }else{
                 const parentMessage = `Dear ${student.parentName},\nThis is to inform you that your child, ${student.name}, was absent on ${previousDay.toDateString()}. Please ensure your child attends the classes regularly. For any queries, feel free to contact the administration.\n\nSincerely,\nSATI College\nVidisha`;
                 //console.log(parentMessage);
-                sendWhatsAppMessage(student.parentContactNo, parentMessage);
+                //sendWhatsAppMessage(student.parentContactNo, parentMessage);
                 const studentMessage = `Dear ${student.name},\nYour attendance has been marked as Absent on ${previousDay.toDateString()}. Please ensure you attend the classes regularly to avoid any academic issues.\n\nSincerely,\nSATI College\nVidisha`;
                 //console.log(studentMessage);
-                sendWhatsAppMessage(student.studentContactNo, studentMessage);
+                //sendWhatsAppMessage(student.studentContactNo, studentMessage);
             }
         });
 
