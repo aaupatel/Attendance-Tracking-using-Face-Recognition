@@ -55,6 +55,9 @@ StreakTrack is a web application designed to manage student attendance using fac
    SESSION_SECRET=<your_secret_key>
    PERISKOPE_API_KEY=<your_Periskope_api_key>
    PERISKOPE_X_PHONE=<your_Periskope_phone_number>
+   IMAGEKIT_PUBLIC_KEY=<your_public_key>
+   IMAGEKIT_PRIVATE_KEY=<your_private_key>
+   IMAGEKIT_URL_ENDPOINT=<https://ik.imagekit.io/your_imagekit_id>
 
 5. **Run the application**:
    ```bash
