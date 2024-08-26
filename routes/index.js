@@ -4,12 +4,15 @@ const router = express.Router();
 const passport = require('passport');
 const localStrategy = require('passport-local');
 const userModel = require('../models/users');
-const upload = require("./multer");
+const imagekit = require('./imagekit');
+const fileUpload = require('express-fileupload');
 const users = require('../models/users');
 const Student = require('../models/student');
 const Attendance = require('../models/attendance');
 const ExcelJS = require('exceljs');
 const sendWhatsAppMessage = require('../sendMessage');
+
+router.use(fileUpload()); // Use express-fileupload middleware
 
 passport.use(new localStrategy(userModel.authenticate()));
 
@@ -114,24 +117,31 @@ router.post('/loginfaculty', passport.authenticate('local', {
 }));
 
 // Route: student registration
-router.post('/registerstudent', upload.array('studentImages', 3),async (req, res) => {
+router.post('/registerstudent', isLoggedIn, async (req, res) => {
   try {
     const { name, enrollmentNo, studentContactNo, parentName, parentContactNo } = req.body;
-    const uploadedImages = req.files;
-
     const user = await users.findOne({ username: req.user.username });
+
     if (!user) {
       return res.status(404).send('User not found');
     }
 
-    const studentImages = [];
+    const uploadedImages = req.files.studentImages; 
+    let studentImages = [];
 
-    uploadedImages.forEach(async (file) => {
-      const imageName = file.filename;
-        const imagePath = `/images/studentsImages/${file.filename}`;
+    const imageFiles = Array.isArray(uploadedImages) ? uploadedImages : [uploadedImages];
 
-        studentImages.push({imageName, imagePath});
-    });
+    for (const file of imageFiles) {
+      const response = await imagekit.upload({
+        file: file.data,
+        fileName: file.name
+      });
+
+      studentImages.push({
+        imageName: response.name,
+        imagePath: response.url
+      });
+    }
 
     const newStudent = {
       name,
@@ -139,13 +149,13 @@ router.post('/registerstudent', upload.array('studentImages', 3),async (req, res
       studentContactNo,
       parentName,
       parentContactNo,
-      images: studentImages, // Store the image path
+      images: studentImages,
       attendance: []
     };
+
     user.students.push(newStudent);
     await user.save();
-    //console.log(newStudent)
-    res.status(200).json({ message: 'Student registered successfully'});
+    res.status(200).json({ message: 'Student registered successfully' });
   } catch (error) {
     console.error('Error registering student:', error);
     res.status(500).json({ message: 'Internal Server Error' });
